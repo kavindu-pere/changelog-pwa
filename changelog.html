@@ -7,7 +7,7 @@
     <script src="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.js"></script>
     <style>
       body {
-        font-family: Courier,"Fira Code", Arial, sans-serif !important;
+        font-family: "Fira Code", Arial, sans-serif !important;
         margin: 0;
         padding: 0;
         display: flex;
@@ -29,8 +29,8 @@
         margin: 5px 0;
         padding-left: 5px;
         padding-right: 5px;
-        padding-top: 2px;
-        padding-bottom: 2px;
+        padding-top: 1px;
+        padding-bottom: 1px;
         display: flex; /* Align bullet and input text in the same row */
         flex-direction: column; /* Ensure child elements are vertical */
         align-items: flex-start; /* Align items to the start */
@@ -41,8 +41,8 @@
       .item.has-children::before {
         content: "";
         position: absolute;
-        top: 30px;
-        bottom: -15px;
+        top: 20px;
+        bottom: -10px;
         left: 8px;
         width: 2px;
         background-color: #d0d0d0; /* Light shade of black */
@@ -55,14 +55,17 @@
         box-sizing: border-box; /* Include padding and border in width calculation */
       }
       .editable-div {
-        font-family: "Fira Code", Arial, sans-serif; /* Ensure the font is Fira Code */
+        font-family: Courier, "Fira Code", Arial, sans-serif; /* Ensure the font is Fira Code */
         font-size: 1rem;
         border: none;
         outline: none;
         background: transparent;
-        padding: 5px;
+        padding-left: 5px;
+        padding-right: 5px;
+        padding-top: 1px;
+        padding-bottom: 1px;
         flex-grow: 1; /* Make the input grow to take remaining space */
-        border-bottom: 1px solid #d0d0d0; /* Light shade of black */
+        border-bottom: 1px dashed #d0d0d0; /* Light shade of black */
         transition: border-color 0.2s;
         max-width: calc(
           100% - 40px
@@ -146,7 +149,7 @@
   </head>
   <body>
     <div id="app">
-      <h2>Changelog</h2>
+      <h2>CHANGELOG</h2>
       <div id="changelog"></div>
     </div>
     <button id="save">Save to JSON</button>
