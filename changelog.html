@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>changelog Clone</title>
+    <script src="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.js"></script>
+    <style>
+      body {
+        font-family: "Fira Code", Arial, sans-serif !important;
+        margin: 0;
+        padding: 0;
+        display: flex;
+        flex-direction: column;
+        height: 100vh;
+        background-color: #f0f0f0; /* Light shade of black */
+      }
+      #app {
+        flex: 1;
+        padding: 20px;
+        overflow-y: auto;
+        background-color: #ffffff; /* White for contrast */
+        border: 1px solid #d0d0d0; /* Light shade of black */
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        border-radius: 8px;
+        margin: 20px;
+      }
+      .item {
+        margin: 5px 0;
+        padding-left: 5px;
+        padding-right: 5px;
+        padding-top: 2px;
+        padding-bottom: 2px;
+        display: flex; /* Align bullet and input text in the same row */
+        flex-direction: column; /* Ensure child elements are vertical */
+        align-items: flex-start; /* Align items to the start */
+        position: relative; /* For indent guides */
+        width: 100%; /* Prevent horizontal growth */
+        box-sizing: border-box; /* Include padding and border in width calculation */
+      }
+      .item.has-children::before {
+        content: "";
+        position: absolute;
+        top: 30px;
+        bottom: -15px;
+        left: 8px;
+        width: 2px;
+        background-color: #d0d0d0; /* Light shade of black */
+      }
+      .item > div,
+      .item > .editable-div {
+        display: flex; /* Align bullet and input text in the same row */
+        align-items: center; /* Align items to the center */
+        width: 100%; /* Ensure the container takes full width */
+        box-sizing: border-box; /* Include padding and border in width calculation */
+      }
+      .editable-div {
+        font-family: "Fira Code", Arial, sans-serif; /* Ensure the font is Fira Code */
+        font-size: 1rem;
+        border: none;
+        outline: none;
+        background: transparent;
+        padding: 5px;
+        flex-grow: 1; /* Make the input grow to take remaining space */
+        border-bottom: 1px solid #d0d0d0; /* Light shade of black */
+        transition: border-color 0.2s;
+        max-width: calc(
+          100% - 40px
+        ); /* Ensure input does not overflow the screen size */
+        resize: none; /* Disable manual resizing */
+        overflow: hidden; /* Hide overflow */
+        line-height: 1.2; /* Reduce line height */
+        white-space: pre-wrap; /* Preserve whitespace and wrap text */
+      }
+      .editable-div:focus {
+        border-color: #606060; /* Darker shade of black */
+      }
+      .bullet {
+        margin-right: 10px;
+        cursor: pointer;
+        user-select: none;
+        display: inline-block;
+        width: 20px; /* Ensures consistent alignment */
+        text-align: center;
+        margin-top: 5px; /* Align bullet at the top of the textarea */
+      }
+      .bullet-icon {
+        display: inline-block;
+        width: 10px; /* Reduced width */
+        height: 10px; /* Reduced height */
+        background-color: #060606; /* Darker shade of black */
+        border-radius: 50%;
+        margin-right: 10px;
+        position: relative;
+      }
+      .bullet-icon.has-children.collapsed {
+        cursor: pointer; /* Change cursor to pointer for bullets with children */
+        box-shadow: 0px 0px 0px 5px rgba(0, 0, 0, 0.2); /* Add drop shadow */
+        background-color: #808080; /* Lighter shade of black */
+      }
+      .gutter-marker {
+        width: 2px;
+        background-color: #d0d0d0; /* Light shade of black */
+        position: absolute;
+        left: 10px;
+        top: 0;
+        bottom: 0;
+      }
+      .gutter-container {
+        position: relative;
+        padding-left: 20px;
+        max-width: calc(
+          100% - 20px
+        ); /* Ensure container does not overflow the screen size */
+        box-sizing: border-box; /* Include padding and border in width calculation */
+      }
+      .gutter-container > .gutter-marker {
+        height: 100%;
+      }
+      .gutter-container > div > .item {
+        position: relative;
+      }
+      .gutter-container > div > .item.has-children::before {
+        content: "";
+        position: absolute;
+        top: 30px;
+        bottom: -15px;
+        left: 8px;
+        width: 2px;
+        background-color: #d0d0d0; /* Light shade of black */
+      }
+      button {
+        margin: 10px 20px;
+        padding: 10px 20px;
+        background-color: #606060; /* Darker shade of black */
+        color: #ffffff;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        transition: background-color 0.2s;
+      }
+      button:hover {
+        background-color: #404040; /* Even darker shade of black */
+      }
+    </style>
+  </head>
+  <body>
+    <div id="app">
+      <h2>Changelog</h2>
+      <div id="changelog"></div>
+    </div>
+    <button id="save">Save to JSON</button>
+    <script>
+      let data = [];
+
+      function createNode(
+        value = "",
+        hasChildren = false,
+        createdDate = new Date()
+      ) {
+        const item = document.createElement("div");
+        item.className = "item";
+        item.dataset.createdDate = createdDate.toISOString();
+        if (hasChildren) {
+          item.classList.add("has-children");
+        }
+        const bullet = document.createElement("div");
+        bullet.className = "bullet-icon";
+        if (hasChildren) {
+          bullet.classList.add("has-children");
+        }
+        const inputContainer = document.createElement("div");
+        const editableDiv = document.createElement("div");
+        editableDiv.className = "editable-div";
+        editableDiv.contentEditable = true;
+        editableDiv.textContent = value;
+        editableDiv.setAttribute("placeholder", "Enter text");
+
+        const container = document.createElement("div");
+        container.className = "gutter-container";
+        container.style.display = hasChildren ? "block" : "none";
+        container.style.marginLeft = "20px"; // Indent children
+
+        bullet.addEventListener("click", () => {
+          if (container.children.length > 0) {
+            const isCollapsed = container.style.display === "none";
+            container.style.display = isCollapsed ? "block" : "none";
+            bullet.classList.toggle("collapsed", !isCollapsed);
+          }
+        });
+
+        editableDiv.addEventListener("keydown", (e) => {
+          if (e.key === "Enter") {
+            const newNode = createNode();
+            item.parentNode.insertBefore(newNode, item.nextSibling);
+            newNode.querySelector(".editable-div").focus();
+            e.preventDefault();
+            updateData();
+          } else if (e.key === "Tab" && !e.shiftKey) {
+            const previous = item.previousElementSibling;
+            if (previous) {
+              const parentContainer =
+                previous.querySelector(".gutter-container");
+              parentContainer.style.display = "block"; // Ensure the parent container is visible
+              parentContainer.appendChild(item);
+              const parentBullet = previous.querySelector(".bullet-icon");
+              if (parentBullet) {
+                parentBullet.classList.add("has-children"); // Update bullet to indicate children
+              }
+              previous.classList.add("has-children"); // Add indent guide to previous item
+              editableDiv.focus(); // Retain focus on the editable div
+            }
+            e.preventDefault();
+            updateData();
+          } else if (e.key === "Tab" && e.shiftKey) {
+            const parentItem = item.parentElement.closest(".item");
+            if (parentItem) {
+              const grandParentContainer = parentItem.parentElement;
+              grandParentContainer.insertBefore(item, parentItem.nextSibling);
+              if (item.parentElement.children.length === 0) {
+                const parentBullet = parentItem.querySelector(".bullet-icon");
+                if (parentBullet) {
+                  parentBullet.classList.remove("has-children"); // Update bullet to remove children indication
+                }
+                parentItem.classList.remove("has-children"); // Remove indent guide from parent item
+              }
+              editableDiv.focus(); // Retain focus on the editable div
+            }
+            e.preventDefault();
+            updateData();
+          } else if (e.key === "Backspace" && editableDiv.textContent === "") {
+            if (item.parentElement) {
+              item.parentElement.removeChild(item);
+            }
+            e.preventDefault();
+            updateData();
+          } else if (e.key === "ArrowUp") {
+            const previousItem = item.previousElementSibling;
+            if (previousItem) {
+              previousItem.querySelector(".editable-div").focus();
+              e.preventDefault();
+            }
+          } else if (e.key === "ArrowDown") {
+            const nextItem = item.nextElementSibling;
+            if (nextItem) {
+              nextItem.querySelector(".editable-div").focus();
+              e.preventDefault();
+            }
+          }
+        });
+
+        editableDiv.addEventListener("input", () => {
+          if (editableDiv.textContent.includes("/date")) {
+            const currentDate = new Date();
+            const formattedDate = currentDate.toLocaleDateString("en-US", {
+              weekday: "short",
+              month: "short",
+              day: "2-digit",
+              year: "numeric",
+            });
+            editableDiv.textContent = editableDiv.textContent.replace(
+              "/date",
+              formattedDate
+            );
+          }
+          updateData();
+        });
+
+        inputContainer.appendChild(bullet);
+        inputContainer.appendChild(editableDiv);
+        item.appendChild(inputContainer);
+        item.appendChild(container);
+        return item;
+      }
+
+      function serializeData(container) {
+        const children = Array.from(container.children).map((item) => {
+          const editableDiv = item.querySelector(".editable-div");
+          const sublist = item.querySelector(".gutter-container");
+          return {
+            text: editableDiv.textContent,
+            createdDate: item.dataset.createdDate,
+            children: serializeData(sublist),
+          };
+        });
+        return children;
+      }
+
+      function saveToFile(jsonData) {
+        const blob = new Blob([JSON.stringify(jsonData, null, 2)], {
+          type: "application/json",
+        });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = "changelog-data.json";
+        a.click();
+        URL.revokeObjectURL(url);
+      }
+
+      document.getElementById("save").addEventListener("click", () => {
+        const rootUl = document.getElementById("changelog");
+        const jsonData = serializeData(rootUl);
+        saveToFile(jsonData);
+      });
+
+      document.getElementById("changelog").appendChild(createNode());
+    </script>
+  </body>
+</html>

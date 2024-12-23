@@ -1,0 +1,86 @@
+[
+  {
+    "text": "This is a note. This is best to write daily changelog",
+    "createdDate": "2024-12-23T08:18:17.545Z",
+    "children": []
+  },
+  {
+    "text": "Mon, Dec 23, 2024",
+    "createdDate": "2024-12-23T08:18:26.919Z",
+    "children": [
+      {
+        "text": "What I did today",
+        "createdDate": "2024-12-23T08:18:36.142Z",
+        "children": []
+      },
+      {
+        "text": "Anything to do",
+        "createdDate": "2024-12-23T08:18:42.273Z",
+        "children": []
+      },
+      {
+        "text": "Some key decisions taken today",
+        "createdDate": "2024-12-23T08:20:00.353Z",
+        "children": []
+      },
+      {
+        "text": "And, that's a wrap",
+        "createdDate": "2024-12-23T08:20:09.147Z",
+        "children": []
+      }
+    ]
+  },
+  {
+    "text": "Fri, Dec 22, 2024",
+    "createdDate": "2024-12-23T08:19:43.954Z",
+    "children": [
+      {
+        "text": "We decided to have the a weekly sync up",
+        "createdDate": "2024-12-23T08:20:35.542Z",
+        "children": []
+      },
+      {
+        "text": "Need to release the bugfix next week",
+        "createdDate": "2024-12-23T08:20:54.112Z",
+        "children": [
+          {
+            "text": "Fix the code issues",
+            "createdDate": "2024-12-23T08:21:14.088Z",
+            "children": []
+          },
+          {
+            "text": "Integration testing",
+            "createdDate": "2024-12-23T08:21:23.256Z",
+            "children": []
+          },
+          {
+            "text": "Do we need UAT?",
+            "createdDate": "2024-12-23T08:21:30.812Z",
+            "children": []
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "text": "Thu, Dec 19, 2024",
+    "createdDate": "2024-12-23T08:18:47.844Z",
+    "children": [
+      {
+        "text": "You can use `/ date` without the <space> between / and date to expand the current date to MMM, DDD, YYYY format ",
+        "createdDate": "2024-12-23T08:22:19.927Z",
+        "children": []
+      },
+      {
+        "text": "This is just the begining",
+        "createdDate": "2024-12-23T08:23:17.811Z",
+        "children": []
+      }
+    ]
+  },
+  {
+    "text": "See the bullet with background halo? That's a collapsed nested list",
+    "createdDate": "2024-12-23T08:18:51.731Z",
+    "children": []
+  }
+]
