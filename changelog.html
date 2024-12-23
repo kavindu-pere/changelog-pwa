@@ -7,7 +7,7 @@
     <script src="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.js"></script>
     <style>
       body {
-        font-family: "Fira Code", Arial, sans-serif !important;
+        font-family: Courier,"Fira Code", Arial, sans-serif !important;
         margin: 0;
         padding: 0;
         display: flex;
@@ -195,7 +195,6 @@
             item.parentNode.insertBefore(newNode, item.nextSibling);
             newNode.querySelector(".editable-div").focus();
             e.preventDefault();
-            updateData();
           } else if (e.key === "Tab" && !e.shiftKey) {
             const previous = item.previousElementSibling;
             if (previous) {
@@ -211,7 +210,6 @@
               editableDiv.focus(); // Retain focus on the editable div
             }
             e.preventDefault();
-            updateData();
           } else if (e.key === "Tab" && e.shiftKey) {
             const parentItem = item.parentElement.closest(".item");
             if (parentItem) {
@@ -227,13 +225,11 @@
               editableDiv.focus(); // Retain focus on the editable div
             }
             e.preventDefault();
-            updateData();
           } else if (e.key === "Backspace" && editableDiv.textContent === "") {
             if (item.parentElement) {
               item.parentElement.removeChild(item);
             }
             e.preventDefault();
-            updateData();
           } else if (e.key === "ArrowUp") {
             const previousItem = item.previousElementSibling;
             if (previousItem) {
@@ -263,7 +259,6 @@
               formattedDate
             );
           }
-          updateData();
         });
 
         inputContainer.appendChild(bullet);
