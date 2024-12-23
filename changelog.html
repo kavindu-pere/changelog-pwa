@@ -4,6 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>changelog Clone</title>
+    <link rel="icon" href="favicon.ico" type="image/x-icon" />
     <script src="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.js"></script>
     <style>
       body {
@@ -155,6 +156,24 @@
     <button id="save">Save to JSON</button>
     <script>
       let data = [];
+      let currentId = 1; // Initialize the ID counter
+
+      // Load data from localStorage
+      function loadData() {
+        const savedData = localStorage.getItem("changelogData");
+        if (savedData) {
+          data = JSON.parse(savedData);
+          currentId = Math.max(...data.map(item => item.id)) + 1; // Set currentId to the highest existing ID + 1
+          renderData(data, document.getElementById("changelog"));
+        }
+      }
+
+      // Save data to localStorage
+      function saveData() {
+        const rootUl = document.getElementById("changelog");
+        const jsonData = serializeData(rootUl);
+        localStorage.setItem("changelogData", JSON.stringify(jsonData));
+      }
 
       function createNode(
         value = "",
@@ -164,6 +183,7 @@
         const item = document.createElement("div");
         item.className = "item";
         item.dataset.createdDate = createdDate.toISOString();
+        item.dataset.id = currentId++; // Assign and increment the ID
         if (hasChildren) {
           item.classList.add("has-children");
         }
@@ -197,6 +217,7 @@
             const newNode = createNode();
             item.parentNode.insertBefore(newNode, item.nextSibling);
             newNode.querySelector(".editable-div").focus();
+            saveData(); // Save data to localStorage
             e.preventDefault();
           } else if (e.key === "Tab" && !e.shiftKey) {
             const previous = item.previousElementSibling;
@@ -212,6 +233,7 @@
               previous.classList.add("has-children"); // Add indent guide to previous item
               editableDiv.focus(); // Retain focus on the editable div
             }
+            saveData(); // Save data to localStorage
             e.preventDefault();
           } else if (e.key === "Tab" && e.shiftKey) {
             const parentItem = item.parentElement.closest(".item");
@@ -227,11 +249,13 @@
               }
               editableDiv.focus(); // Retain focus on the editable div
             }
+            saveData(); // Save data to localStorage
             e.preventDefault();
           } else if (e.key === "Backspace" && editableDiv.textContent === "") {
             if (item.parentElement) {
               item.parentElement.removeChild(item);
             }
+            saveData(); // Save data to localStorage
             e.preventDefault();
           } else if (e.key === "ArrowUp") {
             const previousItem = item.previousElementSibling;
@@ -262,6 +286,7 @@
               formattedDate
             );
           }
+          saveData(); // Save data to localStorage
         });
 
         inputContainer.appendChild(bullet);
@@ -276,12 +301,21 @@
           const editableDiv = item.querySelector(".editable-div");
           const sublist = item.querySelector(".gutter-container");
           return {
+            id: item.dataset.id, // Include the ID in the serialized data
             text: editableDiv.textContent,
             createdDate: item.dataset.createdDate,
             children: serializeData(sublist),
           };
         });
         return children;
+      }
+
+      function renderData(data, container) {
+        data.forEach(itemData => {
+          const item = createNode(itemData.text, itemData.children.length > 0, new Date(itemData.createdDate));
+          renderData(itemData.children, item.querySelector(".gutter-container"));
+          container.appendChild(item);
+        });
       }
 
       function saveToFile(jsonData) {
@@ -297,12 +331,16 @@
       }
 
       document.getElementById("save").addEventListener("click", () => {
+        saveData();
         const rootUl = document.getElementById("changelog");
         const jsonData = serializeData(rootUl);
         saveToFile(jsonData);
       });
 
       document.getElementById("changelog").appendChild(createNode());
+
+      // Load data on page load
+      window.addEventListener("load", loadData);
     </script>
   </body>
 </html>
