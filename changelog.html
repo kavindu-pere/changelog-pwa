@@ -6,6 +6,7 @@
     <title>changelog Clone</title>
     <link rel="icon" href="favicon.ico" type="image/x-icon" />
     <script src="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.js"></script>
+    <link rel="manifest" href="manifest.json" />
     <style>
       body {
         font-family: "Fira Code", Arial, sans-serif !important;
@@ -155,6 +156,15 @@
     </div>
     <button id="save">Save to JSON</button>
     <script>
+      if ("worker" in navigator) {
+        window.addEventListener("load", () => {
+          navigator.serviceWorker
+          .register("/worker.js")
+          .then(res => console.log("Service worker registered"))
+          .catch(err => console.error("Service worker registration failed", err));
+        });
+      }
+
       let data = [];
       let currentId = 1; // Initialize the ID counter
 

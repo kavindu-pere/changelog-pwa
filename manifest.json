@@ -1,0 +1,6 @@
+{
+    "name": "CHANGELOG",
+    "short_name": "changelog",
+    "start_url": "changelog.html",
+    "display": "standalone"
+}
